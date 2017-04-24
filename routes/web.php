@@ -1,6 +1,6 @@
 <?php
 
-use App\Event\MessagePosted;
+use App\Events\MessagePosted;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
