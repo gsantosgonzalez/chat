@@ -33,7 +33,7 @@ Route::post('messages', function() {
     ]);
 
     //Announce the event has occurred
-    event(new MessagePosted($message, $user));
+    broadcast(new MessagePosted($message, $user))->toOthers();
 
     return ['status' => 'Ok'];
 });

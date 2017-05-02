@@ -13,7 +13,6 @@ require('./bootstrap');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-Vue.component('example', require('./components/Example.vue'));
 Vue.component('chat-message', require('./components/ChatMessage.vue'));
 Vue.component('chat-log', require('./components/ChatLog.vue'));
 Vue.component('chat-composer', require('./components/ChatComposer.vue'));
@@ -21,7 +20,8 @@ Vue.component('chat-composer', require('./components/ChatComposer.vue'));
 const app = new Vue({
     el: '#app',
     data: {
-    	messages: []
+    	messages: [],
+        usersInRoom: []
     },
     methods: {
     	addMessage(message) {
@@ -30,7 +30,7 @@ const app = new Vue({
 
             //Persist it to the database
             axios.post('/messages', message).then(response => {
-                /*optional stuff to do after success */
+                console.log(message);
             });
     	}
     },
@@ -40,11 +40,21 @@ const app = new Vue({
         });
 
         Echo.join('chatroom')
-            .here()
-            .joining()
-            .leaving()
+            .here((users) => {
+                this.usersInRoom = users;
+            })
+            .joining((user) => {
+                this.usersInRoom.push(user);
+            })
+            .leaving((user) => {
+                this.usersInRoom = this.usersInRoom.filter(u => u != user)
+            })
             .listen('MessagePosted', (e) => {
-                console.log('inserted');
+                console.log(e);
+                this.messages.push({
+                    body: e.message.body,
+                    user: e.user
+                });
         });
     }
 });
